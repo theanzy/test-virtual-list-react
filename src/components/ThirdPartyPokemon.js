@@ -61,8 +61,15 @@ export default function PokemonListWindow() {
         <div style={{ padding: '5px' }}></div>
       </div>
     ) : (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <Skeleton />
+      <div
+        style={{
+          ...style,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}
+      >
+        {JSON.stringify(hasMore)}
         <Skeleton />
         <Skeleton />
       </div>
@@ -76,7 +83,7 @@ export default function PokemonListWindow() {
   useEffect(() => {
     setNextPageLoading(true);
     getPokemons(currentPage, PageSize).then((result) => {
-      if (result.results === 0) {
+      if (result.results.length === 0) {
         setHasMore(false);
         return;
       }
@@ -126,7 +133,6 @@ export default function PokemonListWindow() {
             style={{
               width: extension.width,
               display: 'flex',
-
               justifyContent: extension.align ?? 'flex-start',
             }}
           >
