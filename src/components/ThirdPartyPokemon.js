@@ -29,7 +29,7 @@ const PageSize = 20;
 export default function PokemonListWindow() {
   const [pokemons, setPokemons] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  const currentPageRef = useRef(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [nextPageLoading, setNextPageLoading] = useState(false);
   const itemCount = hasMore ? pokemons.length + 1 : pokemons.length;
   const isItemLoaded = (index) => !hasMore || index < pokemons.length;
@@ -70,37 +70,25 @@ export default function PokemonListWindow() {
   };
   const loadMoreItems = async (startIndex, stopIndex) => {
     if (!nextPageLoading && hasMore) {
-      console.log('load more');
-      currentPageRef.current += 1;
-      const startOffset = (currentPageRef.current - 1) * PageSize;
-      setNextPageLoading(true);
-      const res = await getPokemons(currentPageRef.current, PageSize);
-      setNextPageLoading(false);
-      if (res.results.length === 0) {
-        setHasMore(false);
-        return;
-      }
-      const pokemonToSave = res.results.map((poke, i) => {
-        return { ...poke, dexNumber: startOffset + i + 1 };
-      });
-      setPokemons((prev) => merge(prev, pokemonToSave));
+      setCurrentPage((prev) => prev + 1);
     }
   };
   useEffect(() => {
-    if (pokemons.length > 0) {
-      return;
-    }
     setNextPageLoading(true);
-    getPokemons(currentPageRef.current, PageSize).then((result) => {
+    getPokemons(currentPage, PageSize).then((result) => {
+      if (result.results === 0) {
+        setHasMore(false);
+        return;
+      }
       const pokemons = result.results;
-      const startOffset = (currentPageRef.current - 1) * PageSize;
+      const startOffset = (currentPage - 1) * PageSize;
       const pokemonToSave = pokemons.map((poke, i) => {
         return { ...poke, dexNumber: startOffset + i + 1 };
       });
       setPokemons((prev) => merge(prev, pokemonToSave));
       setNextPageLoading(false);
     });
-  }, []);
+  }, [currentPage]);
 
   const columnExtensions = [
     {
