@@ -13,7 +13,7 @@ function merge(prev, incoming) {
   return [...prev, ...incoming];
 }
 const PageSize = 20;
-export default function App() {
+export default function ThirdPartyTable() {
   const [pokemons, setPokemons] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const currentPageRef = useRef(1);
@@ -66,6 +66,7 @@ export default function App() {
   if (pokemons.length === 0) {
     return 'loading';
   }
+  console.log(pokemons);
   return (
     <div style={{ height: 700 }}>
       <Table
@@ -74,10 +75,13 @@ export default function App() {
         headerHeight={20}
         rowHeight={30}
         rowCount={itemCount}
-        rowGetter={({ index }) => pokemons[index]}
+        rowGetter={({ index }) =>
+          pokemons[index] != null ? pokemons[index] : ''
+        }
       >
-        <Column label='Name' dataKey='name' width={100} />
-        <Column width={200} label='Description' dataKey='description' />
+        <Column label='Dex Number' dataKey='dexNumber' width={100} />
+        <Column width={200} label='Name' dataKey='name' />
+        <Column label='url' dataKey='url' />
       </Table>
     </div>
   );
