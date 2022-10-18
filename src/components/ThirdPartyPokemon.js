@@ -1,22 +1,24 @@
-import React, {
-  Fragment,
-  PureComponent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { getPokemons } from '../data/pokemon';
-import './Table.css';
+import styles from './Table.module.css';
 import Spinner from './Roller/Spinner';
+import Skeleton from './Skeleton/Skeleton';
 function merge(prev, incoming) {
   const startingIndex = incoming.reduce(
     (minIndex, poke) => Math.min(minIndex, poke.dexNumber),
     Infinity
   );
-  console.log(startingIndex);
+  console.log(prev, incoming);
+  if (
+    prev.some((prevPoke) =>
+      incoming.some((poke) => poke.name === prevPoke.name)
+    )
+  ) {
+    return prev;
+  }
   if (prev.some((poke) => poke.dexNumber === startingIndex)) {
     return prev;
   }
@@ -60,15 +62,15 @@ export default function PokemonListWindow() {
       </div>
     ) : (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <span className='skeleton-loader'></span>
-        <span className='skeleton-loader'></span>
-        <span className='skeleton-loader'></span>
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
       </div>
     );
   };
   const loadMoreItems = async (startIndex, stopIndex) => {
-    console.log('load more', startIndex, stopIndex, currentPageRef.current);
-    if (!nextPageLoading) {
+    if (!nextPageLoading && hasMore) {
+      console.log('load more');
       currentPageRef.current += 1;
       const startOffset = (currentPageRef.current - 1) * PageSize;
       setNextPageLoading(true);
@@ -90,7 +92,6 @@ export default function PokemonListWindow() {
     }
     setNextPageLoading(true);
     getPokemons(currentPageRef.current, PageSize).then((result) => {
-      console.log(result);
       const pokemons = result.results;
       const startOffset = (currentPageRef.current - 1) * PageSize;
       const pokemonToSave = pokemons.map((poke, i) => {
@@ -174,7 +175,7 @@ export default function PokemonListWindow() {
                   onItemsRendered={onItemsRendered}
                   ref={ref}
                   width={width}
-                  className='itable'
+                  className={styles.virtualTable}
                 >
                   {RowFor(pokemons, columnExtensions)}
                 </List>
