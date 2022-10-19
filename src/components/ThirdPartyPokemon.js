@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FixedSizeList as List } from 'react-window';
-import InfiniteLoader from 'react-window-infinite-loader';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { getPokemons } from '../data/pokemon';
-import styles from './Table.module.css';
 import Spinner from './Roller/Spinner';
 import Skeleton from './Skeleton/Skeleton';
+import InfinityScroller from './InfinityScroller/InfinityScroller';
 function merge(prev, incoming) {
   const startingIndex = incoming.reduce(
     (minIndex, poke) => Math.min(minIndex, poke.dexNumber),
@@ -66,12 +63,11 @@ export default function PokemonListWindow() {
           ...style,
           display: 'flex',
           flexDirection: 'column',
-          gap: '8px',
+          gap: '15px',
         }}
       >
-        {JSON.stringify(hasMore)}
-        <Skeleton />
-        <Skeleton />
+        <Skeleton height={12} />
+        <Skeleton height={12} />
       </div>
     );
   };
@@ -153,31 +149,13 @@ export default function PokemonListWindow() {
           <Spinner />
         </div>
       )}
-      <AutoSizer>
-        {({ height, width }) => (
-          <>
-            <InfiniteLoader
-              isItemLoaded={isItemLoaded}
-              itemCount={itemCount}
-              loadMoreItems={loadMoreItems}
-            >
-              {({ onItemsRendered, ref }) => (
-                <List
-                  height={height}
-                  itemCount={itemCount}
-                  itemSize={30}
-                  onItemsRendered={onItemsRendered}
-                  ref={ref}
-                  width={width}
-                  className={styles.virtualTable}
-                >
-                  {RowFor(pokemons, columnExtensions)}
-                </List>
-              )}
-            </InfiniteLoader>
-          </>
-        )}
-      </AutoSizer>
+      <InfinityScroller
+        itemCount={itemCount}
+        itemSize={50}
+        isItemLoaded={isItemLoaded}
+        rowTemplate={RowFor(pokemons, columnExtensions)}
+        loadMoreItems={loadMoreItems}
+      />
     </div>
   );
 }

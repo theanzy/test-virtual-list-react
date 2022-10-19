@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Skeleton.module.css';
-const Skeleton = () => {
-  return <span className={styles.skeleton}></span>;
+const Skeleton = ({ height }) => {
+  return <span style={{ height: height }} className={styles.skeleton}></span>;
 };
 
 export default Skeleton;

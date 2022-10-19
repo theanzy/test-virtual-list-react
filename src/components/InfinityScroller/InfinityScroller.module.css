@@ -1,0 +1,21 @@
+/* width */
+.infinityScroller::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.infinityScroller::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+/* Handle */
+.infinityScroller::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.infinityScroller::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
